@@ -24,16 +24,22 @@ fn change_tag(path: &str, artist: Option<&str>, album: Option<&str>) -> Result<(
     let primary_tag = tagged_file.primary_tag_mut();
     let primary_tag = primary_tag.unwrap();
 
-	if let Some(artist) = artist {
-		primary_tag.set_artist(artist.into());
-	} else {
-        primary_tag.remove_artist();
+    match artist {
+        Some(artist) => {
+            if primary_tag.artist() != Some(artist.into()) {
+                primary_tag.set_artist(artist.into());
+            }
+        }
+        None => primary_tag.remove_artist()
     }
 
-	if let Some(album) = album {
-		primary_tag.set_album(album.into());
-	} else {
-        primary_tag.remove_album();
+    match album {
+        Some(album) => {
+            if primary_tag.album() != Some(album.into()) {
+                primary_tag.set_album(album.into());
+            }
+        }
+        None => primary_tag.remove_album()
     }
 
     Ok(primary_tag.save_to_path(path, WriteOptions::default())?)
